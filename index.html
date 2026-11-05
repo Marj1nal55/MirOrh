@@ -1,0 +1,771 @@
+```html
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TÜBİTAK 2204 - Dijital Göçmenler İçin Yapay Zeka Tespit Portalı</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#090d16',
+                        cardbg: '#111827',
+                        bordercolor: '#1f2937',
+                        neonCyan: '#06b6d4',
+                        neonBlue: '#3b82f6',
+                        neonTeal: '#14b8a6',
+                        tubitakRed: '#ef4444',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #090d16;
+            color: #f3f4f6;
+        }
+
+        /* Yüksek Kontrast Erişilebilirlik Modu */
+        .ultra-contrast {
+            background-color: #000000 !important;
+            color: #ffff00 !important;
+        }
+        .ultra-contrast .glass-card, 
+        .ultra-contrast header, 
+        .ultra-contrast section,
+        .ultra-contrast div {
+            background-color: #000000 !important;
+            border-color: #ffff00 !important;
+            color: #ffff00 !important;
+        }
+        .ultra-contrast button {
+            background-color: #ffff00 !important;
+            color: #000000 !important;
+            font-weight: 800 !important;
+        }
+
+        /* Font Boyutu Sınıfları */
+        .text-size-sm { font-size: 0.95rem; }
+        .text-size-md { font-size: 1.1rem; }
+        .text-size-lg { font-size: 1.25rem; }
+        .text-size-xl { font-size: 1.4rem; }
+
+        .text-size-lg p, .text-size-lg span, .text-size-lg li { font-size: 1.25rem !important; line-height: 1.8 !important; }
+        .text-size-xl p, .text-size-xl span, .text-size-xl li { font-size: 1.45rem !important; line-height: 1.9 !important; }
+
+        /* Cam Efekti (Glassmorphism) */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            transform: translateY(-4px);
+            border-color: rgba(6, 182, 212, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.2);
+        }
+
+        /* Glow Animasyonu */
+        .glow-effect {
+            box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.3);
+        }
+        .glow-effect-blue {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body id="appBody" class="font-sans antialiased text-size-md selection:bg-neonCyan selection:text-slate-900 min-h-screen flex flex-col">
+
+    <!-- Erişilebilirlik ve Kontrol Barı -->
+    <div class="bg-slate-950/90 border-b border-slate-800/80 px-4 py-2 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                    TÜBİTAK 2204-A
+                </span>
+                <span class="text-xs text-slate-400 font-medium hidden sm:inline">| Dijital Göçmenler İçin Yapay Zeka Farkındalığı</span>
+            </div>
+
+            <!-- Erişilebilirlik Butonları -->
+            <div class="flex items-center gap-2 text-xs">
+                <span class="text-slate-400 font-medium hidden md:inline"><i class="fa-solid fa-universal-access text-neonCyan mr-1"></i>Erişilebilirlik:</span>
+                
+                <div class="flex items-center bg-slate-900 rounded-lg border border-slate-800 p-0.5">
+                    <button onclick="changeFontSize(-1)" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition font-bold" title="Yazıyı Küçült">A-</button>
+                    <button onclick="resetFontSize()" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition font-bold border-x border-slate-800" title="Varsayılan Boyut">A</button>
+                    <button onclick="changeFontSize(1)" class="px-2.5 py-1 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition font-bold" title="Yazıyı Büyüt">A+</button>
+                </div>
+
+                <button onclick="toggleUltraContrast()" class="bg-slate-900 hover:bg-slate-800 text-neonCyan px-3 py-1.5 rounded-lg border border-slate-800 font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-half-stroke"></i>
+                    <span class="hidden sm:inline">Kontrast Modu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header & Navigasyon -->
+    <header class="bg-slate-900/60 border-b border-slate-800/60 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Logo & Başlık -->
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-cyan-500/20">
+                        <i class="fa-solid fa-brain-circuit"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                            AI-Detektif <span class="text-xs bg-cyan-500/10 text-neonCyan border border-cyan-500/30 px-2 py-0.5 rounded-md font-mono">2204</span>
+                        </h1>
+                        <p class="text-xs text-slate-400 font-medium">Yapay Zeka Tespit ve Eğitim Platformu</p>
+                    </div>
+                </div>
+
+                <!-- Nav Linkleri -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-semibold">
+                    <a href="#karsilastirma" class="text-slate-300 hover:text-neonCyan px-3 py-2 rounded-lg hover:bg-slate-800/50 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders text-neonCyan"></i> Karşılaştırma
+                    </a>
+                    <a href="#rehber" class="text-slate-300 hover:text-neonCyan px-3 py-2 rounded-lg hover:bg-slate-800/50 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-magnifying-glass text-neonBlue"></i> Tespit Rehberi
+                    </a>
+                    <a href="#test" class="text-slate-300 hover:text-neonCyan px-3 py-2 rounded-lg hover:bg-slate-800/50 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-gamepad text-neonTeal"></i> İnteraktif Test
+                    </a>
+                    <a href="#checklist" class="text-slate-300 hover:text-neonCyan px-3 py-2 rounded-lg hover:bg-slate-800/50 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check text-amber-400"></i> Doğrulama Sihirbazı
+                    </a>
+                    <a href="#kunye" class="text-slate-300 hover:text-neonCyan px-3 py-2 rounded-lg hover:bg-slate-800/50 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-users text-purple-400"></i> Proje Ekibi
+                    </a>
+                </nav>
+
+                <!-- Mobil Menü Butonu -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobil Menü -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 py-3 space-y-2 text-sm font-medium">
+            <a href="#karsilastirma" onclick="toggleMobileMenu()" class="block py-2 text-slate-300 hover:text-neonCyan"><i class="fa-solid fa-sliders text-neonCyan w-6"></i> Karşılaştırma</a>
+            <a href="#rehber" onclick="toggleMobileMenu()" class="block py-2 text-slate-300 hover:text-neonCyan"><i class="fa-solid fa-magnifying-glass text-neonBlue w-6"></i> Tespit Rehberi</a>
+            <a href="#test" onclick="toggleMobileMenu()" class="block py-2 text-slate-300 hover:text-neonCyan"><i class="fa-solid fa-gamepad text-neonTeal w-6"></i> İnteraktif Test</a>
+            <a href="#checklist" onclick="toggleMobileMenu()" class="block py-2 text-slate-300 hover:text-neonCyan"><i class="fa-solid fa-list-check text-amber-400 w-6"></i> Doğrulama Sihirbazı</a>
+            <a href="#kunye" onclick="toggleMobileMenu()" class="block py-2 text-slate-300 hover:text-neonCyan"><i class="fa-solid fa-users text-purple-400 w-6"></i> Proje Ekibi</a>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative py-16 lg:py-24 overflow-hidden border-b border-slate-800/80">
+            <!-- Arka Plan Grid Desen -->
+            <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
+            <div class="absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid lg:grid-cols-12 gap-12 items-center">
+                    
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-neonCyan text-xs sm:text-sm font-semibold">
+                            <i class="fa-solid fa-shield-halved"></i> Dijital Göçmenler İçin YZ Okuryazarlığı
+                        </div>
+
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                            Gördüklerinize Anında İnanmayın: <br/>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-neonCyan via-blue-400 to-teal-300">Yapay Zekayı Tanıma Rehberi</span>
+                        </h2>
+
+                        <p class="text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                            İnternette karşılaştığınız fotoğraflar, ses kayıtları ve haberler her zaman göründüğü gibi gerçek olmayabilir. Yapay zeka ile üretilmiş sahte içerikleri kolayca tespit etmeyi öğrenin.
+                        </p>
+
+                        <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
+                            <a href="#test" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold px-7 py-3.5 rounded-xl shadow-lg shadow-cyan-500/20 transition flex items-center gap-2">
+                                <i class="fa-solid fa-vial-circle-check"></i> Kendini Test Et
+                            </a>
+                            <a href="#rehber" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold px-7 py-3.5 rounded-xl transition flex items-center gap-2">
+                                <i class="fa-solid fa-eye"></i> İpuçlarını İncele
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Sağ Bilgi Kartı -->
+                    <div class="lg:col-span-5">
+                        <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-5 border border-slate-700/60 glow-effect">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                                <span class="text-xs font-bold text-neonCyan uppercase tracking-widest flex items-center gap-1.5">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Kritik İpucu
+                                </span>
+                                <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Önemli</span>
+                            </div>
+
+                            <h3 class="text-lg font-bold text-white">Yapay Zeka İçeriğinde En Sık Yapılan 3 Hata:</h3>
+
+                            <ul class="space-y-4 text-sm text-slate-300">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-lg bg-cyan-500/20 text-neonCyan flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
+                                    <span><strong>Anormal Parmaklar ve Eller:</strong> Fotoğraflardaki ellerde 6 parmak, eksik tırnaklar veya garip bükülmeler arayın.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-lg bg-blue-500/20 text-neonBlue flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</span>
+                                    <span><strong>Bozuk Yazı ve Tabela Simgeleri:</strong> Arka plandaki dükkan tabelaları veya kıyafet üzerindeki yazılar genelde okunamayan sembollerdir.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-lg bg-teal-500/20 text-neonTeal flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</span>
+                                    <span><strong>Pürüzsüz / Yağlı Cilt Doku:</strong> Yüzlerdeki aşırı pürüzsüzlük ve doğal kırışıklıkların olmaması yapay plastik hissi verir.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Bölüm 1: Karşılaştırmalı Görsel Eğitim Kartları (Human vs AI) -->
+        <section id="karsilastirma" class="py-16 bg-slate-900/40 border-b border-slate-800/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-neonCyan font-bold text-xs uppercase tracking-widest bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">Görsel Karşılaştırma</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-3">Gerçek İnsan vs Yapay Zeka Üretimi</h2>
+                    <p class="text-slate-400 mt-2">Kartları inceleyerek Yapay Zeka üretimi ile gerçek insan içerikleri arasındaki belirgin farkları görün.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Kart 1: Portre -->
+                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 glass-card-hover flex flex-col">
+                        <div class="p-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
+                            <span class="font-bold text-sm text-white"><i class="fa-solid fa-user-tag text-neonCyan mr-2"></i>Yüz ve Portre Analizi</span>
+                            <span class="text-xs bg-cyan-500/20 text-neonCyan px-2 py-0.5 rounded font-medium">Görsel</span>
+                        </div>
+                        <div class="p-5 space-y-4 flex-grow">
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                                <div class="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i> Gerçek İnsan Fotoğrafı:
+                                </div>
+                                <p class="text-xs text-slate-300">Ciltte doğal gözenekler, benler, asimetrik gözler, saç tellerinde doğallık ve ortam ışığıyla uyumlu gölgeler bulunur.</p>
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                                <div class="text-xs font-bold text-rose-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-robot"></i> Yapay Zeka Portresi:
+                                </div>
+                                <p class="text-xs text-slate-300">Aşırı pürüzsüz (plastik gibi) cilt, kulak küpelerinde tutarsızlık, arka planda erimiş görünen insan figürleri vardır.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kart 2: Metin -->
+                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 glass-card-hover flex flex-col">
+                        <div class="p-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
+                            <span class="font-bold text-sm text-white"><i class="fa-solid fa-file-signature text-neonBlue mr-2"></i>Metin ve Haber Analizi</span>
+                            <span class="text-xs bg-blue-500/20 text-neonBlue px-2 py-0.5 rounded font-medium">Metin</span>
+                        </div>
+                        <div class="p-5 space-y-4 flex-grow">
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                                <div class="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i> Gerçek İnsan Yazısı:
+                                </div>
+                                <p class="text-xs text-slate-300">Duygu barındırır, kişisel deneyimler içerir, noktalama işaretleri doğal akıştadır ve bazen imla hataları olabilir.</p>
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                                <div class="text-xs font-bold text-rose-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-robot"></i> Yapay Zeka Metni:
+                                </div>
+                                <p class="text-xs text-slate-300">"Özetle", "Buna ek olarak" gibi kalıp ifadeleri çok sık tekrarlar, son derece resmi fakat duygusuzdur.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kart 3: Ses/Video -->
+                    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 glass-card-hover flex flex-col">
+                        <div class="p-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
+                            <span class="font-bold text-sm text-white"><i class="fa-solid fa-headset text-neonTeal mr-2"></i>Ses ve Video (Deepfake)</span>
+                            <span class="text-xs bg-teal-500/20 text-neonTeal px-2 py-0.5 rounded font-medium">Medya</span>
+                        </div>
+                        <div class="p-5 space-y-4 flex-grow">
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                                <div class="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i> Gerçek Konuşma:
+                                </div>
+                                <p class="text-xs text-slate-300">Doğal nefes sesleri, konuşma esnasında göz kırpma, dudak ve ses ritminde milisaniyelik tam uyum bulunur.</p>
+                            </div>
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                                <div class="text-xs font-bold text-rose-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-robot"></i> Klonlanmış Ses / Deepfake:
+                                </div>
+                                <p class="text-xs text-slate-300">Robotik duraksamalar, nefes sesi eksikliği, dudak hareketlerinin sesin gerisinde kalması gözlenir.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Bölüm 2: Detaylı İpuçları ve Rehber -->
+        <section id="rehber" class="py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-neonBlue font-bold text-xs uppercase tracking-widest bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">Detaylı Rehber</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-3">Tespit Yöntemlerini Keşfedin</h2>
+                    <p class="text-slate-400 mt-2">Şüphelendiğiniz içeriğin türüne göre aşağıdaki kategorileri seçerek detaylı ipuçlarına ulaşabilirsiniz.</p>
+                </div>
+
+                <!-- Sekme Butonları -->
+                <div class="flex justify-center gap-2 mb-8 border-b border-slate-800 pb-4 flex-wrap">
+                    <button onclick="switchTab('gorsel')" id="tab-gorsel" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg transition">
+                        <i class="fa-solid fa-image mr-2"></i> Görsel İpuçları
+                    </button>
+                    <button onclick="switchTab('metin')" id="tab-metin" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">
+                        <i class="fa-solid fa-file-lines mr-2"></i> Metin İpuçları
+                    </button>
+                    <button onclick="switchTab('ses')" id="tab-ses" class="tab-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition">
+                        <i class="fa-solid fa-video mr-2"></i> Ses & Video İpuçları
+                    </button>
+                </div>
+
+                <!-- Görsel İçerikler Sekmesi -->
+                <div id="content-gorsel" class="tab-content grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonCyan text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-hand font-normal"></i> 1. El ve Parmak Hataları
+                        </div>
+                        <p class="text-slate-300 text-sm">Yapay zeka modelleri el anatomisinde zorlanır. 6 parmak, eksik tırnaklar veya garip biçimlenmiş eklemlere dikkat edin.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonCyan text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-font"></i> 2. Bozuk Tabelalar ve Semboller
+                        </div>
+                        <p class="text-slate-300 text-sm">Arka plandaki dükkan isimleri, sokak tabelaları veya giysi amblemlerinde anlam belirsiz uzaylı alfabesine benzer simgeler olur.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonCyan text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-glasses"></i> 3. Simetri ve Aksesuar Hataları
+                        </div>
+                        <p class="text-slate-300 text-sm">Gözlük saplarının bir kulakta var olup diğerinde yok olması veya küpelerin iki kulakta tamamen farklı çizilmesi sık görülür.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonCyan text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> 4. Aşırı Plastik Cilt Doku
+                        </div>
+                        <p class="text-slate-300 text-sm">İnsan teninde doğal kırışıklıklar ve gözenekler vardır. YZ yüzleri genelde aşırı pürüzsüz ve parlayan yağlı görünüme sahiptir.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonCyan text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-sun"></i> 5. Işık ve Gölge Çelişkileri
+                        </div>
+                        <p class="text-slate-300 text-sm">Güneş veya ışık kaynağı soldan gelirken gölgelerin sağa düşmemesi gibi fizik kurallarına aykırı detaylar bulunur.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonCyan text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-ghost"></i> 6. Arka Plan Nesne Erimeleri
+                        </div>
+                        <p class="text-slate-300 text-sm">Ana nesnenin arkasındaki binalar, arabalar veya insanlar birbiri içine geçmiş erimiş gibi görünebilir.</p>
+                    </div>
+                </div>
+
+                <!-- Metin İçerikler Sekmesi -->
+                <div id="content-metin" class="tab-content hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonBlue text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-rotate"></i> 1. Sürekli Kalıp İfadeler
+                        </div>
+                        <p class="text-slate-300 text-sm">"Özetlemek gerekirse...", "Buna ek olarak...", "Sonuç itibariyle..." gibi resmi bağlaçlar abartılı şekilde sık kullanılır.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonBlue text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-heart-crack"></i> 2. Duygu ve Yaşanmışlık Eksikliği
+                        </div>
+                        <p class="text-slate-300 text-sm">Yazı mükemmel bir gramere sahip olsa da içinde gerçek bir insanın hissettiği sevinç, öfke veya kişisel anı bulunmaz.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonBlue text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced"></i> 3. Aşırı Neutral (Tarafsız) Duruş
+                        </div>
+                        <p class="text-slate-300 text-sm">Yapay zeka net bir taraf seçmek yerine genellikle "Bir yandan şöyleyken diğer yandan böyledir" mantığıyla suya sabuna dokunmaz.</p>
+                    </div>
+                </div>
+
+                <!-- Ses & Video Sekmesi -->
+                <div id="content-ses" class="tab-content hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonTeal text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-eye-slash"></i> 1. Göz Kırpma Eksikliği
+                        </div>
+                        <p class="text-slate-300 text-sm">Deepfake videolarındaki kişiler doğal insan ritminden uzaktır; ya hiç göz kırpmazlar ya da göz hareketleri uyumsuzdur.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonTeal text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-volume-xmark"></i> 2. Dudak Senkron Kayan Bilgiler
+                        </div>
+                        <p class="text-slate-300 text-sm">Konuşanın ağız hareketleri ile duyulan kelimeler arasında küçük milisaniyelik kaymalar veya uyumsuzluklar oluşur.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="text-neonTeal text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-wave-square"></i> 3. Robotik Nefes Kesilmeleri
+                        </div>
+                        <p class="text-slate-300 text-sm">Klonlanan seslerde kelimelerin arasında doğal nefes alma sesleri olmaz ve tonlama aniden dümdüzleşebilir.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Bölüm 3: İnteraktif Test (Quiz) -->
+        <section id="test" class="py-16 bg-slate-900/60 border-t border-b border-slate-800">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <span class="text-neonTeal font-bold text-xs uppercase tracking-widest bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">Uygulamalı Test</span>
+                    <h2 class="text-3xl font-extrabold text-white mt-3">Sıra Sizde: Yapay Zeka mı, Gerçek mi?</h2>
+                    <p class="text-slate-400 mt-2">Aşağıdaki senaryoları dikkatlice okuyun ve doğru tespiti yapın.</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-700/80 shadow-2xl relative">
+                    <!-- İlerleme Barı -->
+                    <div class="flex justify-between items-center mb-4 text-xs font-semibold text-slate-400">
+                        <span id="quizProgressText">Soru 1 / 3</span>
+                        <span id="quizScoreText" class="text-neonCyan font-bold">Puan: 0</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full mb-6 overflow-hidden">
+                        <div id="progressBar" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full w-1/3 transition-all duration-300"></div>
+                    </div>
+
+                    <!-- Soru Kutusu -->
+                    <div id="quizContainer">
+                        <!-- JS Dinamik İçerik -->
+                    </div>
+
+                    <!-- Geribildirim -->
+                    <div id="feedbackBox" class="hidden mt-6 p-4 rounded-xl text-sm font-semibold"></div>
+
+                    <!-- İlerle Butonu -->
+                    <div class="mt-6 text-right">
+                        <button id="nextBtn" onclick="nextQuestion()" class="hidden bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-lg">
+                            Sonraki Soru <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bölüm 4: Şüpheli İçerik Doğrulama Sihirbazı (Checklist) -->
+        <section id="checklist" class="py-16">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <span class="text-amber-400 font-bold text-xs uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">Sihirbaz</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-3">Şüpheli İçerik Doğrulama Adımları</h2>
+                    <p class="text-slate-400 mt-2">Şüphelendiğiniz bir görsel veya mesaj aldığınızda bu 4 adımı sırayla kontrol edin.</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-4 border border-slate-800">
+                    
+                    <label class="flex items-start gap-4 p-4 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                        <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-1 w-5 h-5 accent-cyan-500 rounded">
+                        <div>
+                            <span class="font-bold text-white block">1. Güvenilir Kaynak Kontrolü</span>
+                            <span class="text-slate-400 text-xs sm:text-sm">Haber veya fotoğraf resmi haber sitelerinde veya tanınmış kurumların hesaplarında yayınlanmış mı?</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-4 p-4 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                        <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-1 w-5 h-5 accent-cyan-500 rounded">
+                        <div>
+                            <span class="font-bold text-white block">2. Fiziksel Detay Yakınlaştırması</span>
+                            <span class="text-slate-400 text-xs sm:text-sm">Görsele yaklaşarak parmak sayısına, göz bebeklerine, kulak yapısına ve arka plandaki yazılara baktınız mı?</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-4 p-4 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                        <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-1 w-5 h-5 accent-cyan-500 rounded">
+                        <div>
+                            <span class="font-bold text-white block">3. Tersine Görsel Araması</span>
+                            <span class="text-slate-400 text-xs sm:text-sm">Google Görseller veya Teyit.org gibi doğrulama platformlarında fotoğrafı aratarak kaynağını sorguladınız mı?</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-4 p-4 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                        <input type="checkbox" onchange="updateChecklistProgress()" class="chk-item mt-1 w-5 h-5 accent-cyan-500 rounded">
+                        <div>
+                            <span class="font-bold text-white block">4. Duygusal Aşırtma ve Panik Faktörü</span>
+                            <span class="text-slate-400 text-xs sm:text-sm">İçerik sizi aniden aşırı korkutmak, öfkelendirmek veya para göndermenizi sağlamak için mi hazırlanmış?</span>
+                        </div>
+                    </label>
+
+                    <!-- İlerleme Özeti -->
+                    <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap justify-between items-center gap-2 text-sm font-semibold">
+                        <span class="text-slate-300">Tamamlanan Kontrol: <strong id="chkCount" class="text-neonCyan">0</strong> / 4</span>
+                        <span id="chkStatus" class="text-amber-400">Lütfen tüm adımları uygulayın.</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Bölüm 5: Proje Tanıtımı & Künye -->
+        <section id="kunye" class="py-16 bg-slate-900/40 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-12 gap-10 items-center">
+                    
+                    <div class="lg:col-span-7 space-y-5">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-xs">
+                            <i class="fa-solid fa-award"></i> TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projesi
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Projenin Amacı ve Önemi</h2>
+                        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+                            Bu araştırma projesi; dijital mecralarda hızla yayılan yapay zeka üretimi yanıltıcı içeriklerin, teknolojiyi sonradan öğrenen **Dijital Göçmenler (yetişkinler ve yaşlı bireyler)** tarafından tespit edilebilmesini amaçlamaktadır.
+                        </p>
+                        <p class="text-slate-300 leading-relaxed text-sm sm:text-base">
+                            Hazırlanan etkileşimli eğitim modülleri ve rehberler sayesinde, dijital okuryazarlığın artırılması ve siber dolandırıcılık/dezenformasyon risklerinin azaltılması hedeflenmektedir.
+                        </p>
+                    </div>
+
+                    <!-- Ekip Kartı -->
+                    <div class="lg:col-span-5">
+                        <div class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 glow-effect-blue">
+                            <h3 class="text-lg font-bold text-white mb-6 border-b border-slate-800 pb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-users text-neonBlue"></i> Proje Ekibi
+                            </h3>
+
+                            <div class="space-y-4">
+                                <!-- Öğrenci 1 -->
+                                <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                                    <div class="w-11 h-11 bg-cyan-500/20 text-neonCyan rounded-xl flex items-center justify-center font-extrabold text-base border border-cyan-500/30">
+                                        OD
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm sm:text-base">Orhan Demirhan</h4>
+                                        <p class="text-xs text-neonCyan font-medium">9-E Sınıfı Öğrencisi</p>
+                                    </div>
+                                </div>
+
+                                <!-- Öğrenci 2 -->
+                                <div class="flex items-center gap-4 p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                                    <div class="w-11 h-11 bg-blue-500/20 text-neonBlue rounded-xl flex items-center justify-center font-extrabold text-base border border-blue-500/30">
+                                        MA
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm sm:text-base">Miraç Enes Akkuş</h4>
+                                        <p class="text-xs text-neonBlue font-medium">9-E Sınıfı Öğrencisi</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-4 border-t border-slate-800 text-center">
+                                <span class="text-xs text-slate-500 font-medium">Danışman Öğretmen Rehberliğinde Hazırlanmıştır.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="text-slate-400 font-medium">TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması</p>
+            <p>Orhan Demirhan (9-E) & Miraç Enes Akkuş (9-E) &copy; 2026. Tüm Hakları Saklıdır.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Mantığı -->
+    <script>
+        // Erişilebilirlik Font Ayarları
+        let fontStep = 0; // -1: sm, 0: md, 1: lg, 2: xl
+        const fontClasses = ['text-size-sm', 'text-size-md', 'text-size-lg', 'text-size-xl'];
+
+        function changeFontSize(delta) {
+            const body = document.getElementById('appBody');
+            body.classList.remove(fontClasses[fontStep + 1]);
+            
+            fontStep = Math.max(-1, Math.min(2, fontStep + delta));
+            
+            // Mevcut tüm sınıfları temizle ve yenisini ekle
+            fontClasses.forEach(c => body.classList.remove(c));
+            body.classList.add(fontClasses[fontStep + 1]);
+        }
+
+        function resetFontSize() {
+            const body = document.getElementById('appBody');
+            fontClasses.forEach(c => body.classList.remove(c));
+            fontStep = 0;
+            body.classList.add('text-size-md');
+        }
+
+        function toggleUltraContrast() {
+            document.getElementById('appBody').classList.toggle('ultra-contrast');
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        // Sekme Değiştirici
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-cyan-500', 'to-blue-600', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-400');
+            });
+
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+            const activeBtn = document.getElementById('tab-' + tabName);
+            activeBtn.classList.remove('bg-slate-800', 'text-slate-400');
+            activeBtn.classList.add('bg-gradient-to-r', 'from-cyan-500', 'to-blue-600', 'text-white');
+        }
+
+        // Quiz Verisi ve Mantığı
+        const quizData = [
+            {
+                title: "Senaryo 1: Yaşlı Bir Adamın Fotoğrafı",
+                description: "Bir sosyal medya paylaşımındaki portre fotoğrafta adamın elinde 6 adet parmak var, tırnak yapısı belirsiz ve arkasındaki dükkan tabelasında anlamsız simgeler yazıyor.",
+                options: [
+                    { text: "Bu Fotoğraf Gerçektir", correct: false },
+                    { text: "Bu Görsel Yapay Zeka Üretimidir", correct: true }
+                ],
+                explanation: "Tebrikler! Fazladan parmaklar ve okunamayan tabelalar Yapay Zekanın en belirgin çizim hataları arasındadır."
+            },
+            {
+                title: "Senaryo 2: Sosyal Medyadaki Haber Yazısı",
+                description: "Gelen bir haber metninde 'Özetlemek gerekirse', 'Sonuç itibariyle' ifadeleri sürekli tekrarlanıyor. Yazı gramer olarak kusursuz fakat hiç insani duygu barındırmıyor.",
+                options: [
+                    { text: "Yapay Zeka Metni", correct: true },
+                    { text: "Bir Gazetecinin Makalesi", correct: false }
+                ],
+                explanation: "Harika tespit! Yapay zeka metinleri duygusuz, aşırı düzenli ve sürekli benzer geçiş kelimelerini tekrarlayan bir yapıdadır."
+            },
+            {
+                title: "Senaryo 3: Ünlü Bir Kişinin Videosu (Deepfake)",
+                description: "Videodaki kişinin sesi oldukça gerçekçi ancak dakikalarca hiç göz kırpmıyor ve dudak hareketleri çıkan sesin arkasından geliyor.",
+                options: [
+                    { text: "Gerçek Bir Video", correct: false },
+                    { text: "Deepfake (Sahte) Video", correct: true }
+                ],
+                explanation: "Doğru! Dudak senkron kayması ve göz kırpmama durumu Deepfake teknolojisinin bıraktığı dijital izlerdir."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            const container = document.getElementById('quizContainer');
+            const feedbackBox = document.getElementById('feedbackBox');
+            const nextBtn = document.getElementById('nextBtn');
+
+            feedbackBox.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+
+            document.getElementById('quizProgressText').innerText = `Soru ${currentQuestion + 1} / ${quizData.length}`;
+            document.getElementById('progressBar').style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+
+            let html = `
+                <h3 class="text-xl font-bold text-white mb-3">${q.title}</h3>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 bg-slate-900/80 p-4 rounded-xl border border-slate-800">${q.description}</p>
+                <div class="grid sm:grid-cols-2 gap-4">
+            `;
+
+            q.options.forEach((opt, idx) => {
+                html += `
+                    <button onclick="checkAnswer(${idx})" class="quiz-opt-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold p-4 rounded-xl text-left border border-slate-700 transition flex items-center justify-between">
+                        <span>${opt.text}</span>
+                        <i class="fa-regular fa-circle text-slate-400"></i>
+                    </button>
+                `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function checkAnswer(selectedIndex) {
+            const q = quizData[currentQuestion];
+            const isCorrect = q.options[selectedIndex].correct;
+            const feedbackBox = document.getElementById('feedbackBox');
+            const nextBtn = document.getElementById('nextBtn');
+
+            document.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                score += 10;
+                document.getElementById('quizScoreText').innerText = `Puan: ${score}`;
+                feedbackBox.className = "mt-6 p-4 rounded-xl text-sm font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> Doğru! ${q.explanation}`;
+            } else {
+                feedbackBox.className = "mt-6 p-4 rounded-xl text-sm font-semibold bg-rose-500/10 border border-rose-500/30 text-rose-400";
+                feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark mr-2"></i> Yanlış. ${q.explanation}`;
+            }
+
+            feedbackBox.classList.remove('hidden');
+            
+            if (currentQuestion < quizData.length - 1) {
+                nextBtn.classList.remove('hidden');
+            } else {
+                nextBtn.innerText = "Testi Tamamla";
+                nextBtn.classList.remove('hidden');
+                nextBtn.onclick = function() {
+                    alert(`Tebrikler! Testi tamamladınız. Toplam Puanınız: ${score}`);
+                };
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        // Doğrulama Sihirbazı
+        function updateChecklistProgress() {
+            const items = document.querySelectorAll('.chk-item');
+            let checkedCount = 0;
+            items.forEach(chk => { if (chk.checked) checkedCount++; });
+
+            document.getElementById('chkCount').innerText = checkedCount;
+            const statusEl = document.getElementById('chkStatus');
+
+            if (checkedCount === 0) {
+                statusEl.className = "text-amber-400";
+                statusEl.innerText = "Lütfen tüm adımları uygulayın.";
+            } else if (checkedCount < 4) {
+                statusEl.className = "text-neonCyan";
+                statusEl.innerText = "Kontrol devam ediyor...";
+            } else {
+                statusEl.className = "text-emerald-400";
+                statusEl.innerText = "Tebrikler! İçerik doğrulama adımlarını tamamladınız.";
+            }
+        }
+
+        window.onload = function() {
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
+```
